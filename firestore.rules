@@ -11,20 +11,27 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    function isAdmin() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // User Profile security rules
     match /users/{userId} {
-      // User can read their own profile
-      allow read: if isOwner(userId);
+      // User can read their own profile; Admin can read any profile
+      allow read: if isOwner(userId) || isAdmin();
 
       // User can create their profile upon registration (only as 'customer')
       allow create: if isOwner(userId)
                     && request.resource.data.role == 'customer'
                     && request.resource.data.uid == userId;
 
-      // User can update their basic details (prevent changing identity or role)
-      allow update: if isOwner(userId)
-                    && request.resource.data.role == resource.data.role
-                    && request.resource.data.uid == userId;
+      // User can update basic details (strictly prevents changing role/uid); Admin can update user role
+      allow update: if (isOwner(userId)
+                        && request.resource.data.role == resource.data.role
+                        && request.resource.data.uid == userId)
+                    || isAdmin();
 
       // Deletion not permitted directly from frontend
       allow delete: if false;
@@ -35,10 +42,31 @@ service cloud.firestore {
       }
     }
 
+    // Seller Application security rules
+    match /seller_applications/{userId} {
+      // User can read their own application; Admin can read all applications
+      allow read: if isOwner(userId) || isAdmin();
+
+      // User can create their initial seller application (must be status 'pending' and match authenticated UID)
+      allow create: if isOwner(userId)
+                    && request.resource.data.uid == userId
+                    && request.resource.data.status == 'pending';
+
+      // User can update their own application to resubmit (must keep status 'pending' and match authenticated UID);
+      // Admin can update any application status (e.g., approve, reject, suspend)
+      allow update: if (isOwner(userId)
+                        && request.resource.data.uid == userId
+                        && request.resource.data.status == 'pending')
+                    || isAdmin();
+
+      // Only Admin can delete seller applications
+      allow delete: if isAdmin();
+    }
+
     // Public Collections
     match /products/{productId} {
       allow read: if true;
-      allow write: if false; // Future seller permissions
+      allow write: if false;
     }
 
     match /stores/{storeId} {

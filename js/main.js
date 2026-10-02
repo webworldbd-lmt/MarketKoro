@@ -8,6 +8,7 @@ import { createEmptyState } from './components/empty-state.js';
 import { showToast } from './components/toast.js';
 import { onAuthChanged, getCurrentState } from './auth/auth-service.js';
 import { renderHeaderAccountState } from './auth/auth-ui.js';
+import { openBecomeSellerModal } from './seller/seller-ui.js';
 import { db } from '../config/firebase.js';
 import { collection, getDocs, query, where, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -44,6 +45,25 @@ document.addEventListener('DOMContentLoaded', () => {
   onAuthChanged((state) => {
     renderHeaderAccountState(navAccountItem, state);
   });
+
+  // Bind Become Seller Triggers
+  const heroBecomeSellerBtn = document.getElementById('hero-become-seller-btn');
+  if (heroBecomeSellerBtn) {
+    heroBecomeSellerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const state = getCurrentState();
+      openBecomeSellerModal(state.user, state.profile);
+    });
+  }
+
+  const footerBecomeSellerLink = document.getElementById('footer-become-seller-link');
+  if (footerBecomeSellerLink) {
+    footerBecomeSellerLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const state = getCurrentState();
+      openBecomeSellerModal(state.user, state.profile);
+    });
+  }
 
   // Render Homepage UI Sections
   renderCategories();
@@ -104,12 +124,11 @@ async function fetchRealProducts(isFeatured = false) {
     }
     const snap = await getDocs(q);
     const list = [];
-    snap.forEach((doc) => {
-      list.push({ id: doc.id, ...doc.data() });
+    snap.forEach((docSnap) => {
+      list.push({ id: docSnap.id, ...docSnap.data() });
     });
     return list;
   } catch (err) {
-    // Return empty list if collection doesn't exist yet or offline
     return [];
   }
 }
@@ -125,9 +144,9 @@ async function renderFeaturedProducts() {
     container.className = '';
     const emptyState = createEmptyState({
       icon: '✨',
-      titleBn: 'এখনো কোনো বিশেষ পণ্য নেই',
-      titleEn: 'No featured products yet.',
-      subBn: 'খুব শীঘ্রই সেলারদের মানসম্মত পণ্য এখানে স্থান পাবে।',
+      titleBn: 'এখনো কোনো পণ্য যোগ করা হয়নি',
+      titleEn: 'No products have been added yet.',
+      subBn: 'খুব শীঘ্রই অনুমোদিত সেলারদের মানসম্মত পণ্য এখানে দেখা যাবে।',
       subEn: 'Verified seller products will appear here soon.'
     });
     container.appendChild(emptyState);
@@ -150,9 +169,9 @@ async function renderPopularProducts() {
     container.className = '';
     const emptyState = createEmptyState({
       icon: '🔥',
-      titleBn: 'কোনো জনপ্রিয় পণ্য পাওয়া যায়নি',
-      titleEn: 'No popular products yet.',
-      subBn: 'ক্রেতাদের পছন্দের পণ্যসমূহ এখানে দেখা যাবে।',
+      titleBn: 'এখনো কোনো পণ্য যোগ করা হয়নি',
+      titleEn: 'No products have been added yet.',
+      subBn: 'ক্রেতাদের পছন্দের জনপ্রিয় পণ্যসমূহ এখানে দেখা যাবে।',
       subEn: 'Popular customer items will be highlighted here.'
     });
     container.appendChild(emptyState);
@@ -173,7 +192,7 @@ async function renderFeaturedSellers() {
   try {
     const storesRef = collection(db, 'stores');
     const snap = await getDocs(query(storesRef, limit(4)));
-    snap.forEach((doc) => stores.push({ id: doc.id, ...doc.data() }));
+    snap.forEach((docSnap) => stores.push({ id: docSnap.id, ...docSnap.data() }));
   } catch (e) {
     stores = [];
   }
@@ -184,7 +203,7 @@ async function renderFeaturedSellers() {
       icon: '🏪',
       titleBn: 'কোনো সেলার এখনো পাওয়া যায়নি',
       titleEn: 'No sellers are available yet.',
-      subBn: 'বাংলাদেশের বিভিন্ন জেলার নিবন্ধিত সেলারদের স্টোর এখানে দেখা যাবে।',
+      subBn: 'বাংলাদেশের বিভিন্ন জেলার অনুমোদিত সেলারদের স্টোর এখানে দেখা যাবে।',
       subEn: 'Verified multi-vendor stores will appear here soon.'
     });
     container.appendChild(emptyState);
