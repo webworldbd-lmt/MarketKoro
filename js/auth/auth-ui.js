@@ -16,6 +16,9 @@ import {
   sendPasswordReset,
   logoutUser
 } from './auth-service.js';
+import { openBecomeSellerModal } from '../seller/seller-ui.js';
+import { openSellerDashboard } from '../seller/seller-dashboard-ui.js';
+import { openAdminSellerManagement } from '../seller/admin-seller-ui.js';
 
 let activeAuthModalBackdrop = null;
 let currentPhoneConfirmation = null;
@@ -478,7 +481,6 @@ export function openForgotPasswordModal() {
       console.error("Reset password failed:", err);
       submitBtn.disabled = false;
       submitBtn.textContent = getTranslation('auth.reset_password_btn');
-      // Do not expose whether user email exists to prevent account-enumeration
       showToast(getTranslation('auth.reset_link_sent'), 'success');
       closeModal(activeAuthModalBackdrop);
     }
@@ -522,7 +524,25 @@ export function openProfileModal(user, profile) {
       </div>
     </div>
 
-    <button id="modal-logout-btn" class="btn btn-outline btn-full" style="margin-top: var(--space-6); color: var(--color-error); border-color: var(--color-error);">
+    <div style="display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-4);">
+      ${role === 'seller' ? `
+        <button id="profile-seller-dash-btn" class="btn btn-primary btn-full">
+          🏪 ${getTranslation('seller.dashboard_btn') || "Go to Seller Dashboard"}
+        </button>
+      ` : `
+        <button id="profile-become-seller-btn" class="btn btn-secondary btn-full">
+          💼 ${getTranslation('seller.become_seller_title') || "Become a Seller"}
+        </button>
+      `}
+
+      ${role === 'admin' ? `
+        <button id="profile-admin-mgmt-btn" class="btn btn-outline btn-full" style="border-color: var(--color-primary); color: var(--color-primary);">
+          🛡️ ${getTranslation('admin.seller_mgmt_title') || "Admin Seller Management"}
+        </button>
+      ` : ''}
+    </div>
+
+    <button id="modal-logout-btn" class="btn btn-outline btn-full" style="margin-top: var(--space-4); color: var(--color-error); border-color: var(--color-error);">
       ${getTranslation('auth.logout')}
     </button>
   `;
@@ -530,6 +550,21 @@ export function openProfileModal(user, profile) {
   activeAuthModalBackdrop = createModal({
     title: getTranslation('auth.profile_overview'),
     bodyContent: container
+  });
+
+  container.querySelector('#profile-become-seller-btn')?.addEventListener('click', () => {
+    closeModal(activeAuthModalBackdrop);
+    openBecomeSellerModal(user, profile);
+  });
+
+  container.querySelector('#profile-seller-dash-btn')?.addEventListener('click', () => {
+    closeModal(activeAuthModalBackdrop);
+    openSellerDashboard(user, profile);
+  });
+
+  container.querySelector('#profile-admin-mgmt-btn')?.addEventListener('click', () => {
+    closeModal(activeAuthModalBackdrop);
+    openAdminSellerManagement(user, profile);
   });
 
   container.querySelector('#modal-logout-btn').addEventListener('click', async () => {

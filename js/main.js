@@ -8,6 +8,7 @@ import { formatNumber } from './utils/formatters.js';
 import { showToast } from './components/toast.js';
 import { onAuthChanged, getCurrentState } from './auth/auth-service.js';
 import { renderHeaderAccountState } from './auth/auth-ui.js';
+import { openBecomeSellerModal } from './seller/seller-ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Theme and Internationalization
@@ -42,6 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
   onAuthChanged((state) => {
     renderHeaderAccountState(navAccountItem, state);
   });
+
+  // Bind Become Seller Buttons
+  const heroBecomeSellerBtn = document.getElementById('hero-become-seller-btn');
+  if (heroBecomeSellerBtn) {
+    heroBecomeSellerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const state = getCurrentState();
+      openBecomeSellerModal(state.user, state.profile);
+    });
+  }
+
+  const footerBecomeSellerLink = document.getElementById('footer-become-seller-link');
+  if (footerBecomeSellerLink) {
+    footerBecomeSellerLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const state = getCurrentState();
+      openBecomeSellerModal(state.user, state.profile);
+    });
+  }
 
   // Render Homepage UI Sections
   renderCategories();
