@@ -160,6 +160,7 @@ export const translations = {
     "seller.dashboard_orders": "Total Orders",
     "seller.dashboard_sales": "Total Sales",
     "seller.dashboard_wallet": "Available Balance",
+    "seller.view_public_store": "View Public Store",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "Overview",
@@ -352,6 +353,7 @@ export const translations = {
     "seller.dashboard_orders": "মোট অর্ডার",
     "seller.dashboard_sales": "মোট বিক্রি",
     "seller.dashboard_wallet": "উত্তোলনযোগ্য ব্যালেন্স",
+    "seller.view_public_store": "পাবলিক স্টোর দেখুন",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "সারসংক্ষেপ",

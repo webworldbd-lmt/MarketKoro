@@ -159,6 +159,124 @@ export async function getAllSellerApplications() {
 }
 
 /**
+ * Update Seller Profile (Self-service by approved seller)
+ * @param {string} uid
+ * @param {Object} updateData
+ */
+export async function updateSellerProfile(uid, updateData) {
+  if (!uid) throw new Error("User authentication required.");
+
+  const appRef = doc(db, 'seller_applications', uid);
+  const existingApp = await getSellerApplication(uid);
+
+  if (!existingApp) {
+    throw new Error("Seller record not found.");
+  }
+
+  // Handle store slug update if requested
+  let newSlug = existingApp.storeSlug;
+  if (updateData.storeName && updateData.storeSlug) {
+    const formattedSlug = generateStoreSlug(updateData.storeSlug);
+    if (!formattedSlug) {
+      throw new Error("Invalid store slug format.");
+    }
+    if (formattedSlug !== existingApp.storeSlug) {
+      const isAvailable = await checkSlugAvailability(formattedSlug, uid);
+      if (!isAvailable) {
+        throw new Error(`Store slug "${formattedSlug}" is already taken by another seller.`);
+      }
+      newSlug = formattedSlug;
+    }
+  }
+
+  const profilePayload = {
+    fullName: updateData.fullName !== undefined ? updateData.fullName : existingApp.fullName,
+    phone: updateData.phone !== undefined ? updateData.phone : existingApp.phone,
+    storeName: updateData.storeName !== undefined ? updateData.storeName : existingApp.storeName,
+    storeSlug: newSlug,
+    storeDescription: updateData.storeDescription !== undefined ? updateData.storeDescription : (existingApp.storeDescription || ''),
+    businessAddress: updateData.businessAddress !== undefined ? updateData.businessAddress : (existingApp.businessAddress || ''),
+    division: updateData.division !== undefined ? updateData.division : (existingApp.division || ''),
+    district: updateData.district !== undefined ? updateData.district : (existingApp.district || ''),
+    upazila: updateData.upazila !== undefined ? updateData.upazila : (existingApp.upazila || ''),
+    storeLogo: updateData.storeLogo !== undefined ? updateData.storeLogo : (existingApp.storeLogo || ''),
+    storeBanner: updateData.storeBanner !== undefined ? updateData.storeBanner : (existingApp.storeBanner || ''),
+    socialLinks: {
+      facebook: updateData.socialLinks?.facebook !== undefined ? updateData.socialLinks.facebook : (existingApp.socialLinks?.facebook || ''),
+      instagram: updateData.socialLinks?.instagram !== undefined ? updateData.socialLinks.instagram : (existingApp.socialLinks?.instagram || ''),
+      website: updateData.socialLinks?.website !== undefined ? updateData.socialLinks.website : (existingApp.socialLinks?.website || '')
+    },
+    contactPhone: updateData.contactPhone !== undefined ? updateData.contactPhone : (existingApp.contactPhone || existingApp.phone || ''),
+    ownerInfo: {
+      fullName: updateData.fullName || existingApp.ownerInfo?.fullName || existingApp.fullName || '',
+      email: existingApp.ownerInfo?.email || existingApp.email || '',
+      phone: updateData.phone || existingApp.ownerInfo?.phone || existingApp.phone || ''
+    },
+    updatedAt: serverTimestamp()
+  };
+
+  await updateDoc(appRef, profilePayload);
+
+  // Sync basic profile details to user document if modified
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, {
+    fullName: profilePayload.fullName,
+    phone: profilePayload.phone,
+    updatedAt: serverTimestamp()
+  }).catch((err) => console.warn("Optional user profile sync warning:", err));
+
+  return profilePayload;
+}
+
+/**
+ * Fetch Public Approved Seller Store by Slug
+ * @param {string} slug
+ * @returns {Promise<Object|null>}
+ */
+export async function getPublicSellerStoreBySlug(slug) {
+  if (!slug) return null;
+  try {
+    const q = query(
+      collection(db, 'seller_applications'),
+      where('storeSlug', '==', slug),
+      where('status', '==', 'approved')
+    );
+    const querySnap = await getDocs(q);
+    let foundStore = null;
+    querySnap.forEach((docSnap) => {
+      foundStore = docSnap.data();
+    });
+    return foundStore;
+  } catch (err) {
+    console.error("Error fetching store by slug:", err);
+    return null;
+  }
+}
+
+/**
+ * Fetch Public Approved Seller Store by UID
+ * @param {string} uid
+ * @returns {Promise<Object|null>}
+ */
+export async function getPublicSellerStoreByUid(uid) {
+  if (!uid) return null;
+  try {
+    const docRef = doc(db, 'seller_applications', uid);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.status === 'approved') {
+        return data;
+      }
+    }
+    return null;
+  } catch (err) {
+    console.error("Error fetching store by uid:", err);
+    return null;
+  }
+}
+
+/**
  * Update Seller Application status & User Role (Admin function)
  * @param {string} targetUid
  * @param {'approved'|'rejected'|'suspended'|'pending'} newStatus
