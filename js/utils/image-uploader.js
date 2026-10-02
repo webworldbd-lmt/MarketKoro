@@ -32,13 +32,17 @@ export function validateImageFile(file) {
 /**
  * Uploads image file to Cloudinary or converts to data URL as fallback
  * @param {File} file
+ * @param {Object} [options] - Options like folder or targetDimension
+ * @param {Function} [onProgress] - Optional progress callback function(percent)
  * @returns {Promise<string>} Image URL
  */
-export async function uploadImage(file) {
+export async function uploadImage(file, options = {}, onProgress = null) {
   const validation = validateImageFile(file);
   if (!validation.valid) {
     throw new Error(validation.error);
   }
+
+  if (onProgress) onProgress(20);
 
   // Attempt Cloudinary upload if configuration is not a placeholder
   if (
@@ -55,6 +59,8 @@ export async function uploadImage(file) {
         formData.append('folder', cloudinaryConfig.folder);
       }
 
+      if (onProgress) onProgress(50);
+
       const response = await fetch(CLOUDINARY_UPLOAD_URL, {
         method: 'POST',
         body: formData
@@ -65,7 +71,9 @@ export async function uploadImage(file) {
         throw new Error(errJson.error?.message || 'Cloudinary upload failed.');
       }
 
+      if (onProgress) onProgress(90);
       const data = await response.json();
+      if (onProgress) onProgress(100);
       return data.secure_url;
     } catch (err) {
       console.warn("Cloudinary upload failed, falling back to FileReader:", err);
@@ -75,7 +83,11 @@ export async function uploadImage(file) {
   // Fallback: Read file as Data URL for local presentation/testing
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
+    if (onProgress) onProgress(60);
+    reader.onload = () => {
+      if (onProgress) onProgress(100);
+      resolve(reader.result);
+    };
     reader.onerror = (e) => reject(new Error("Failed to read image file."));
     reader.readAsDataURL(file);
   });

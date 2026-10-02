@@ -7,9 +7,10 @@ import { getTranslation } from '../i18n/i18n.js';
 import { createModal, closeModal } from '../components/modal.js';
 import { showToast } from '../components/toast.js';
 import { openLoginModal } from '../auth/auth-ui.js';
-import { getSellerApplication } from './seller-service.js';
+import { getSellerApplication, updateSellerProfile, generateStoreSlug, checkSlugAvailability } from './seller-service.js';
 import { openBecomeSellerModal } from './seller-ui.js';
 import { createEmptyState } from '../components/empty-state.js';
+import { uploadImage } from '../utils/image-uploader.js';
 
 let activeDashboardModalBackdrop = null;
 let activeSellerTab = 'overview';
@@ -520,29 +521,330 @@ function renderOverviewTab(container, application, metrics) {
 }
 
 /**
- * Navigation Foundations (Structural empty states - Stop Condition #13)
+ * Store Profile & Management Tab
  */
 function renderStoreTabStructure(container, application) {
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.style.padding = 'var(--space-6)';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'card';
+  wrapper.style.padding = 'var(--space-6)';
 
-  card.innerHTML = `
-    <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--space-3);" data-i18n="seller.nav_store">
-      স্টোর পরিচিতি ও ব্যানার
-    </h3>
+  const currentLogo = application.storeLogo || 'assets/images/placeholder-store.svg';
+  const currentBanner = application.storeBanner || '';
+  const currentSlug = application.storeSlug || '';
+
+  wrapper.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-4); margin-bottom: var(--space-5);">
+      <div>
+        <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin: 0;" data-i18n="seller.nav_store">
+          স্টোর পরিচিতি ও সেটিংস (Store Profile & Branding)
+        </h3>
+        <p style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 4px;">
+          আপনার স্টোরের লোগো, ব্যানার, ঠিকানা ও ব্র্যান্ডিং সম্পর্কিত তথ্য পরিবর্তন করুন।
+        </p>
+      </div>
+
+      <div style="display: flex; gap: var(--space-2);">
+        <a href="store.html?slug=${encodeURIComponent(currentSlug)}" target="_blank" class="btn btn-outline btn-sm">
+          👁️ <span data-i18n="seller.view_public_store">পাবলিক স্টোর দেখুন</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Store Profile Edit Form -->
+    <form id="seller-profile-form" style="display: flex; flex-direction: column; gap: var(--space-5);">
+
+      <!-- Status Indicator (Read Only) -->
+      <div style="display: flex; align-items: center; justify-content: space-between; background-color: var(--color-bg); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border-left: 4px solid var(--color-success);">
+        <div>
+          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); font-weight: 600;">স্টোর স্ট্যাটাস (Store Status)</span>
+          <div style="font-weight: 700; color: var(--color-success); font-size: var(--font-size-md);">
+            ✔ ${getTranslation('seller.status_approved') || 'অনুমোদিত সেলার (Approved)'}
+          </div>
+        </div>
+        <span class="badge" style="background-color: var(--color-success-bg); color: var(--color-success);">Active</span>
+      </div>
+
+      <!-- Banner & Logo Upload Section -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-5);">
+
+        <!-- Store Logo Picker -->
+        <div class="card" style="padding: var(--space-4); border: 1px dashed var(--color-border); text-align: center;">
+          <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);" data-i18n="seller.store_logo">
+            স্টোর লোগো (Square ~500x500)
+          </label>
+          <div style="position: relative; width: 100px; height: 100px; margin: 0 auto var(--space-3);">
+            <img id="seller-logo-preview" src="${currentLogo}" alt="Logo Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid var(--color-border); background-color: var(--color-surface);">
+          </div>
+
+          <input type="file" id="seller-logo-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+          <button type="button" id="seller-logo-btn" class="btn btn-outline btn-sm" style="width: 100%;">
+            🖼️ লোগো আপলোড করুন
+          </button>
+          <div id="seller-logo-progress" style="display: none; margin-top: var(--space-2); font-size: var(--font-size-xs); color: var(--color-primary);">
+            আপলোড হচ্ছে... <span id="seller-logo-percent">0%</span>
+          </div>
+          <p style="font-size: 11px; color: var(--color-text-muted); margin-top: 6px;">সর্বোচ্চ আকার: ২ মেগাবাইট (JPEG, PNG, WebP)</p>
+        </div>
+
+        <!-- Store Banner Picker -->
+        <div class="card" style="padding: var(--space-4); border: 1px dashed var(--color-border); text-align: center;">
+          <label style="font-weight: 600; display: block; margin-bottom: var(--space-2);" data-i18n="seller.store_banner">
+            স্টোর ব্যানার (Aspect ratio 3:1)
+          </label>
+          <div style="height: 100px; width: 100%; margin-bottom: var(--space-3); border-radius: var(--radius-md); overflow: hidden; background-color: var(--color-bg); border: 1px solid var(--color-border);">
+            <img id="seller-banner-preview" src="${currentBanner || 'assets/images/placeholder-banner.png'}" alt="Banner Preview" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+
+          <input type="file" id="seller-banner-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+          <button type="button" id="seller-banner-btn" class="btn btn-outline btn-sm" style="width: 100%;">
+            🖼️ ব্যানার আপলোড করুন
+          </button>
+          <div id="seller-banner-progress" style="display: none; margin-top: var(--space-2); font-size: var(--font-size-xs); color: var(--color-primary);">
+            আপলোড হচ্ছে... <span id="seller-banner-percent">0%</span>
+          </div>
+          <p style="font-size: 11px; color: var(--color-text-muted); margin-top: 6px;">সর্বোচ্চ আকার: ২ মেগাবাইট (JPEG, PNG, WebP)</p>
+        </div>
+
+      </div>
+
+      <!-- Business & Store General Info -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4);">
+
+        <div class="form-group">
+          <label for="prof-store-name" class="form-label">
+            ${getTranslation('seller.store_name') || 'ব্যবসা / স্টোরের নাম'} <span style="color: var(--color-error);">*</span>
+          </label>
+          <input type="text" id="prof-store-name" class="form-control" value="${application.storeName || ''}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="prof-store-slug" class="form-label">
+            ${getTranslation('seller.store_slug') || 'স্টোর ইউআরএল (Slug)'} <span style="color: var(--color-error);">*</span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">seller.</span>
+            <input type="text" id="prof-store-slug" class="form-control" value="${currentSlug}" required>
+            <span style="font-size: var(--font-size-xs); color: var(--color-text-muted); me">.marketkoro.com</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Seller Identity Info -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4);">
+
+        <div class="form-group">
+          <label for="prof-full-name" class="form-label">
+            ${getTranslation('auth.full_name') || 'সেলার নাম'} <span style="color: var(--color-error);">*</span>
+          </label>
+          <input type="text" id="prof-full-name" class="form-control" value="${application.fullName || ''}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="prof-phone" class="form-label">
+            ${getTranslation('auth.phone') || 'যোগাযোগ ফোন নম্বর'} <span style="color: var(--color-error);">*</span>
+          </label>
+          <input type="tel" id="prof-phone" class="form-control" value="${application.contactPhone || application.phone || ''}" required>
+        </div>
+
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="prof-store-desc" class="form-label">
+          ${getTranslation('seller.store_desc') || 'স্টোরের বিবরণ'}
+        </label>
+        <textarea id="prof-store-desc" class="form-control" rows="3">${application.storeDescription || ''}</textarea>
+      </div>
+
+      <!-- Business Address & Location -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="prof-business-addr" class="form-label">
+            ${getTranslation('seller.business_address') || 'ব্যবসার পূর্ণাঙ্গ ঠিকানা'}
+          </label>
+          <input type="text" id="prof-business-addr" class="form-control" value="${application.businessAddress || ''}">
+        </div>
+
+        <div class="form-group">
+          <label for="prof-division" class="form-label">${getTranslation('seller.division') || 'বিভাগ'}</label>
+          <input type="text" id="prof-division" class="form-control" value="${application.division || ''}">
+        </div>
+
+        <div class="form-group">
+          <label for="prof-district" class="form-label">${getTranslation('seller.district') || 'জেলা'}</label>
+          <input type="text" id="prof-district" class="form-control" value="${application.district || ''}">
+        </div>
+
+        <div class="form-group">
+          <label for="prof-upazila" class="form-label">${getTranslation('seller.upazila') || 'উপজেলা / এলাকা'}</label>
+          <input type="text" id="prof-upazila" class="form-control" value="${application.upazila || ''}">
+        </div>
+
+      </div>
+
+      <!-- Social Links -->
+      <div style="border-top: 1px solid var(--color-border); padding-top: var(--space-4);">
+        <h4 style="font-size: var(--font-size-md); font-weight: 600; margin-bottom: var(--space-3);">
+          🌐 সোশ্যাল মিডিয়া ও ওয়েবসাইট লিংক (Social Links)
+        </h4>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4);">
+          <div class="form-group">
+            <label for="prof-social-fb" class="form-label">Facebook Page URL</label>
+            <input type="url" id="prof-social-fb" class="form-control" placeholder="https://facebook.com/yourstore" value="${application.socialLinks?.facebook || ''}">
+          </div>
+
+          <div class="form-group">
+            <label for="prof-social-insta" class="form-label">Instagram Profile URL</label>
+            <input type="url" id="prof-social-insta" class="form-control" placeholder="https://instagram.com/yourstore" value="${application.socialLinks?.instagram || ''}">
+          </div>
+
+          <div class="form-group">
+            <label for="prof-social-web" class="form-label">Website URL</label>
+            <input type="url" id="prof-social-web" class="form-control" placeholder="https://yourstore.com" value="${application.socialLinks?.website || ''}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Action -->
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-3); border-top: 1px solid var(--color-border); padding-top: var(--space-4);">
+        <button type="submit" id="prof-save-btn" class="btn btn-primary" style="min-width: 180px;">
+          💾 <span data-i18n="account.save_changes">পরিবর্তন সংরক্ষণ করুন</span>
+        </button>
+      </div>
+
+    </form>
   `;
 
-  const emptyState = createEmptyState({
-    icon: '🏪',
-    titleBn: 'স্টোর পরিচিতি ও লোগো ম্যানেজমেন্ট',
-    titleEn: 'Store Identity & Branding Structure',
-    subBn: 'স্টোরের ব্যানার, লোগো, ডেসক্রিপশন এবং সামাজিক যোগাযোগের লিংক সম্পর্কিত সেটিংস এখানে যুক্ত হবে।',
-    subEn: 'Store profile settings, logo, banner, and business contact options foundation is active.'
+  // Attach Image Upload Triggers
+  let updatedLogoUrl = currentLogo;
+  let updatedBannerUrl = currentBanner;
+
+  const logoInput = wrapper.querySelector('#seller-logo-input');
+  const logoBtn = wrapper.querySelector('#seller-logo-btn');
+  const logoPreview = wrapper.querySelector('#seller-logo-preview');
+  const logoProgress = wrapper.querySelector('#seller-logo-progress');
+  const logoPercent = wrapper.querySelector('#seller-logo-percent');
+
+  logoBtn?.addEventListener('click', () => logoInput.click());
+  logoInput?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      logoProgress.style.display = 'block';
+      logoBtn.disabled = true;
+
+      const url = await uploadImage(file, { folder: 'seller_logos' }, (pct) => {
+        if (logoPercent) logoPercent.textContent = `${pct}%`;
+      });
+
+      updatedLogoUrl = url;
+      logoPreview.src = url;
+      showToast("লোগো সফলভাবে আপলোড করা হয়েছে।", "success");
+    } catch (err) {
+      showToast(err.message || "লোগো আপলোড ব্যর্থ হয়েছে।", "error");
+    } finally {
+      logoProgress.style.display = 'none';
+      logoBtn.disabled = false;
+    }
   });
 
-  card.appendChild(emptyState);
-  container.appendChild(card);
+  const bannerInput = wrapper.querySelector('#seller-banner-input');
+  const bannerBtn = wrapper.querySelector('#seller-banner-btn');
+  const bannerPreview = wrapper.querySelector('#seller-banner-preview');
+  const bannerProgress = wrapper.querySelector('#seller-banner-progress');
+  const bannerPercent = wrapper.querySelector('#seller-banner-percent');
+
+  bannerBtn?.addEventListener('click', () => bannerInput.click());
+  bannerInput?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      bannerProgress.style.display = 'block';
+      bannerBtn.disabled = true;
+
+      const url = await uploadImage(file, { folder: 'seller_banners' }, (pct) => {
+        if (bannerPercent) bannerPercent.textContent = `${pct}%`;
+      });
+
+      updatedBannerUrl = url;
+      bannerPreview.src = url;
+      showToast("ব্যানার সফলভাবে আপলোড করা হয়েছে।", "success");
+    } catch (err) {
+      showToast(err.message || "ব্যানার আপলোড ব্যর্থ হয়েছে।", "error");
+    } finally {
+      bannerProgress.style.display = 'none';
+      bannerBtn.disabled = false;
+    }
+  });
+
+  // Slug Auto-formatting on change
+  const slugInput = wrapper.querySelector('#prof-store-slug');
+  const storeNameInput = wrapper.querySelector('#prof-store-name');
+
+  storeNameInput?.addEventListener('blur', () => {
+    if (slugInput && !slugInput.value.trim()) {
+      slugInput.value = generateStoreSlug(storeNameInput.value);
+    }
+  });
+
+  // Handle Form Submission
+  const form = wrapper.querySelector('#seller-profile-form');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const saveBtn = wrapper.querySelector('#prof-save-btn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = `<span class="loading-spinner"></span> সংরক্ষন হচ্ছে...`;
+
+    try {
+      const storeName = storeNameInput.value.trim();
+      const rawSlug = slugInput.value.trim();
+      const formattedSlug = generateStoreSlug(rawSlug || storeName);
+
+      const payload = {
+        fullName: wrapper.querySelector('#prof-full-name').value.trim(),
+        phone: wrapper.querySelector('#prof-phone').value.trim(),
+        contactPhone: wrapper.querySelector('#prof-phone').value.trim(),
+        storeName: storeName,
+        storeSlug: formattedSlug,
+        storeDescription: wrapper.querySelector('#prof-store-desc').value.trim(),
+        businessAddress: wrapper.querySelector('#prof-business-addr').value.trim(),
+        division: wrapper.querySelector('#prof-division').value.trim(),
+        district: wrapper.querySelector('#prof-district').value.trim(),
+        upazila: wrapper.querySelector('#prof-upazila').value.trim(),
+        storeLogo: updatedLogoUrl,
+        storeBanner: updatedBannerUrl,
+        socialLinks: {
+          facebook: wrapper.querySelector('#prof-social-fb').value.trim(),
+          instagram: wrapper.querySelector('#prof-social-insta').value.trim(),
+          website: wrapper.querySelector('#prof-social-web').value.trim()
+        }
+      };
+
+      await updateSellerProfile(application.uid, payload);
+      showToast(getTranslation('account.profile_updated') || "স্টোর প্রোফাইল তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।", "success");
+
+      // Refresh page view
+      const updatedApp = await getSellerApplication(application.uid);
+      const root = document.getElementById('seller-dashboard-root');
+      if (root && updatedApp) {
+        renderApprovedSellerDashboard(root, updatedApp, { uid: application.uid }, null);
+      }
+    } catch (err) {
+      console.error("Error updating seller profile:", err);
+      showToast(err.message || "প্রোফাইল সংরক্ষণ ব্যর্থ হয়েছে।", "error");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = `💾 <span data-i18n="account.save_changes">পরিবর্তন সংরক্ষণ করুন</span>`;
+    }
+  });
+
+  container.appendChild(wrapper);
 }
 
 function renderProductsTabStructure(container) {

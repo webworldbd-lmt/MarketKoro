@@ -44,17 +44,20 @@ service cloud.firestore {
 
     // Seller Application security rules
     match /seller_applications/{userId} {
-      // User can read their own application; Admin can read all applications
-      allow read: if isOwner(userId) || isAdmin();
+      // User can read their own application; Admin can read all applications; Public can read approved applications
+      allow read: if isOwner(userId) || isAdmin() || (resource != null && resource.data.status == 'approved');
 
       // User can create their initial seller application (must be status 'pending' and match authenticated UID)
       allow create: if isOwner(userId)
                     && request.resource.data.uid == userId
                     && request.resource.data.status == 'pending';
 
-      // User can update their own application to resubmit (must keep status 'pending' and match authenticated UID);
+      // User can update their own application to update profile (preserving current status) or resubmit (status 'pending');
       // Admin can update any application status (e.g., approve, reject, suspend)
       allow update: if (isOwner(userId)
+                        && request.resource.data.uid == userId
+                        && request.resource.data.status == resource.data.status)
+                    || (isOwner(userId)
                         && request.resource.data.uid == userId
                         && request.resource.data.status == 'pending')
                     || isAdmin();
