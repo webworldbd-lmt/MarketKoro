@@ -158,7 +158,17 @@ export const translations = {
     "seller.dashboard_notice_body": "Your seller account is verified.",
     "seller.dashboard_products": "Total Products",
     "seller.dashboard_orders": "Total Orders",
-    "seller.dashboard_wallet": "Wallet Balance",
+    "seller.dashboard_sales": "Total Sales",
+    "seller.dashboard_wallet": "Available Balance",
+
+    // Seller Dashboard Navigation
+    "seller.nav_overview": "Overview",
+    "seller.nav_store": "Store Profile",
+    "seller.nav_products": "Products",
+    "seller.nav_orders": "Orders",
+    "seller.nav_earnings": "Earnings",
+    "seller.nav_withdrawals": "Withdrawals",
+    "seller.nav_settings": "Settings",
 
     // Admin Seller Management
     "admin.seller_mgmt_title": "Admin Seller Management",
@@ -340,7 +350,17 @@ export const translations = {
     "seller.dashboard_notice_body": "আপনার সেলার একাউন্ট অনুমোদিত হয়েছে।",
     "seller.dashboard_products": "মোট পণ্য",
     "seller.dashboard_orders": "মোট অর্ডার",
-    "seller.dashboard_wallet": "ওয়ালেট ব্যালেন্স",
+    "seller.dashboard_sales": "মোট বিক্রি",
+    "seller.dashboard_wallet": "উত্তোলনযোগ্য ব্যালেন্স",
+
+    // Seller Dashboard Navigation
+    "seller.nav_overview": "সারসংক্ষেপ",
+    "seller.nav_store": "স্টোর পরিচিতি",
+    "seller.nav_products": "পণ্য ব্যবস্থাপনা",
+    "seller.nav_orders": "অর্ডারসমূহ",
+    "seller.nav_earnings": "আয় ও বিক্রি",
+    "seller.nav_withdrawals": "উত্তোলন",
+    "seller.nav_settings": "সেটিংস",
 
     // Admin Seller Management
     "admin.seller_mgmt_title": "এডমিন সেলার ব্যবস্থাপনা",
