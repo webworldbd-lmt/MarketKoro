@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarketKoro - Shop Smart. Sell Better.</title>
+
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+
+  <!-- CSS Design Tokens & Modules -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- Anti-Flash Theme Script (inline) -->
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('marketkoro_theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="container">
+      <div class="header-top">
+        <!-- Logo -->
+        <a href="index.html" class="brand-logo" aria-label="MarketKoro Home">
+          <img src="assets/images/logo.svg" alt="MarketKoro" width="220" height="48">
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-bar-container">
+          <form class="search-form" id="search-form">
+            <input type="text" class="search-input" data-i18n="search.placeholder" placeholder="বাংলাদেশের পণ্য, ব্র্যান্ড বা ক্যাটাগরি খুঁজুন..." aria-label="Search">
+            <button type="submit" class="btn btn-primary search-btn" data-i18n="search.button">খুঁজুন</button>
+          </form>
+        </div>
+
+        <!-- Header Actions: Language, Theme, Mobile Nav Toggle -->
+        <div class="header-actions">
+          <button id="lang-toggle-btn" class="btn btn-outline btn-sm" aria-label="Language Switcher">English</button>
+          <button id="theme-toggle-btn" class="btn btn-outline btn-icon" aria-label="Toggle Light/Dark Theme">🌙</button>
+          <button id="mobile-nav-toggle-btn" class="btn btn-outline btn-icon mobile-nav-toggle" aria-label="Toggle Mobile Menu">☰</button>
+        </div>
+      </div>
+
+      <!-- Main Navigation -->
+      <nav class="navbar" id="navbar">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link active" data-i18n="nav.home">হোম</a></li>
+          <li><a href="#categories" class="nav-link" data-i18n="nav.categories">ক্যাটাগরি</a></li>
+          <li><a href="#featured-products" class="nav-link" data-i18n="nav.products">পণ্যসমূহ</a></li>
+          <li><a href="#featured-sellers" class="nav-link" data-i18n="nav.stores">স্টোর ও সেলার</a></li>
+          <li><a href="#cart" class="nav-link" data-i18n="nav.cart">কার্ট</a></li>
+          <li><a href="#account" class="nav-link" data-i18n="nav.account">একাউন্ট</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Hero Banner Section -->
+      <section class="section">
+        <div class="hero-banner">
+          <div class="hero-content">
+            <span class="badge badge-secondary" style="margin-bottom: var(--space-3);" data-i18n="product.demo_tag">DEMO</span>
+            <h1 class="hero-title" data-i18n="hero.title">বাংলাদেশের নির্ভরযোগ্য মাল্টি-ভেন্ডার মার্কেটপ্লেস</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">৬৪ জেলার বিশ্বস্ত স্থানীয় সেলারদের সেরা মানের পণ্য এখন এক জায়গায়।</p>
+            <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+              <a href="#featured-products" class="btn btn-secondary" data-i18n="hero.shop_now">পণ্য দেখুন</a>
+              <a href="#featured-sellers" class="btn btn-outline" style="color: #FFFFFF; border-color: rgba(255,255,255,0.4);" data-i18n="hero.become_seller">বিক্রি শুরু করুন</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Categories Section -->
+      <section id="categories" class="section">
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="section.categories">ক্যাটাগরি সমূহ</h2>
+          <a href="#categories" class="view-all-link"><span data-i18n="section.view_all">সবগুলো দেখুন</span> →</a>
+        </div>
+        <div id="categories-grid" class="grid grid-cols-6">
+          <!-- Dynamic Categories rendered by js/main.js -->
+        </div>
+      </section>
+
+      <!-- Featured Products Section -->
+      <section id="featured-products" class="section">
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="section.featured_products">বিশেষ পণ্যসমূহ</h2>
+          <a href="#featured-products" class="view-all-link"><span data-i18n="section.view_all">সবগুলো দেখুন</span> →</a>
+        </div>
+        <div id="featured-products-grid" class="grid grid-cols-4">
+          <!-- Dynamic Products rendered by js/main.js -->
+        </div>
+      </section>
+
+      <!-- Popular Products Section -->
+      <section id="popular-products" class="section">
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="section.popular_products">জনপ্রিয় পণ্যসমূহ</h2>
+          <a href="#popular-products" class="view-all-link"><span data-i18n="section.view_all">সবগুলো দেখুন</span> →</a>
+        </div>
+        <div id="popular-products-grid" class="grid grid-cols-4">
+          <!-- Dynamic Popular Products rendered by js/main.js -->
+        </div>
+      </section>
+
+      <!-- Featured Sellers Section -->
+      <section id="featured-sellers" class="section">
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="section.featured_sellers">সেরা স্টোরসমূহ</h2>
+          <a href="#featured-sellers" class="view-all-link"><span data-i18n="section.view_all">সবগুলো দেখুন</span> →</a>
+        </div>
+        <div id="featured-sellers-grid" class="grid grid-cols-4">
+          <!-- Dynamic Sellers rendered by js/main.js -->
+        </div>
+      </section>
+
+      <!-- Promotional Section Placeholder -->
+      <section class="section">
+        <div class="card" style="padding: var(--space-8); background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-primary-light) 100%); text-align: center;">
+          <span class="badge badge-demo" style="align-self: center; margin-bottom: var(--space-2);" data-i18n="product.demo_tag">DEMO</span>
+          <h3 data-i18n="section.promo_banner">বিশেষ অফার</h3>
+          <p data-i18n="brand.tagline">স্মার্ট কেনাকাটা। সেরা বিক্রি।</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand-logo" style="margin-bottom: var(--space-4);">
+            <img src="assets/images/logo.svg" alt="MarketKoro" width="200" height="44">
+          </a>
+          <p class="footer-link" data-i18n="footer.about_desc">
+            মার্কেটকোরো বাংলাদেশের আধুনিক মাল্টি-ভেন্ডার ই-কমার্স প্ল্যাটফর্ম, যা ক্রেতা ও স্থানীয় বিক্রেতাদের একই সূত্রে বাঁধে।
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title" data-i18n="footer.quick_links">প্রয়োজনীয় লিংক</h4>
+          <ul class="footer-links">
+            <li><a href="#categories" class="footer-link" data-i18n="nav.categories">ক্যাটাগরি</a></li>
+            <li><a href="#featured-products" class="footer-link" data-i18n="nav.products">পণ্যসমূহ</a></li>
+            <li><a href="#featured-sellers" class="footer-link" data-i18n="nav.stores">স্টোর ও সেলার</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title" data-i18n="footer.seller_hub">সেলার হাব</h4>
+          <ul class="footer-links">
+            <li><a href="#become-seller" class="footer-link" data-i18n="hero.become_seller">বিক্রি শুরু করুন</a></li>
+            <li><a href="#seller-policy" class="footer-link" data-i18n="footer.terms">শর্তাবলী</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title" data-i18n="footer.customer_care">কাস্টমার সাপোর্ট</h4>
+          <ul class="footer-links">
+            <li><a href="#privacy" class="footer-link" data-i18n="footer.privacy_policy">প্রাইভেসি পলিসি</a></li>
+            <li><a href="#terms" class="footer-link" data-i18n="footer.terms">ব্যবহারের শর্তাবলী</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div data-i18n="footer.copyright">© ২০২৬ মার্কেটকোরো। সর্বস্বত্ব সংরক্ষিত।</div>
+        <div style="display: flex; gap: var(--space-2); align-items: center;">
+          <span class="badge badge-demo">Phase 1 Foundation</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

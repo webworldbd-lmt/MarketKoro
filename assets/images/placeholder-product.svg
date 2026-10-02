@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <rect width="500" height="500" fill="#E2E8F0"/>
+  <rect x="150" y="150" width="200" height="200" rx="20" fill="#CBD5E1"/>
+  <path d="M200 220 C200 180, 300 180, 300 220" fill="none" stroke="#0D9488" stroke-width="16" stroke-linecap="round"/>
+  <rect x="180" y="220" width="140" height="120" rx="12" fill="#0D9488"/>
+  <text x="250" y="400" font-family="'Hind Siliguri', sans-serif" font-weight="600" font-size="24" fill="#64748B" text-anchor="middle">MarketKoro Product</text>
+</svg>

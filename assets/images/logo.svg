@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" width="280" height="60">
+  <rect width="280" height="60" rx="12" fill="none"/>
+  <!-- Logo Icon: Shopping Bag + K Letterform / Star in Emerald Green & Amber Coral -->
+  <g transform="translate(10, 8)">
+    <rect x="0" y="8" width="38" height="34" rx="8" fill="#0D9488"/>
+    <path d="M12 10 C12 2, 26 2, 26 10" fill="none" stroke="#0D9488" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M11 19 L19 26 L11 33 M19 26 L27 19 M19 26 L27 33" fill="none" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Brand Text -->
+  <text x="56" y="38" font-family="'Hind Siliguri', 'Segoe UI', sans-serif" font-weight="800" font-size="26" fill="#0F172A">Market<tspan fill="#0D9488">Koro</tspan></text>
+  <text x="56" y="50" font-family="'Hind Siliguri', 'Segoe UI', sans-serif" font-weight="500" font-size="9" fill="#64748B" letter-spacing="0.5">SHOP SMART. SELL BETTER.</text>
+</svg>
