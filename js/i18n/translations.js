@@ -29,7 +29,6 @@ export const translations = {
 
     // Product Card
     "product.add_to_cart": "Add to Cart",
-    "product.demo_tag": "Demo",
     "product.rating_count": "reviews",
 
     // Store Card
@@ -72,6 +71,31 @@ export const translations = {
     "auth.role_customer": "Customer",
     "auth.profile_overview": "My Account Overview",
     "auth.welcome_back": "Welcome back",
+
+    // Account Dashboard & Profile Tabs
+    "account.tab_profile": "Personal Information",
+    "account.tab_addresses": "Addresses",
+    "account.tab_wishlist": "Wishlist",
+    "account.tab_orders": "Orders",
+    "account.tab_reviews": "Reviews",
+    "account.tab_notifications": "Notifications",
+    "account.tab_settings": "Settings",
+    "account.profile_title": "Personal Information",
+    "account.addresses_title": "Delivery Addresses",
+    "account.add_new_address": "Add New Address",
+    "account.edit_address": "Edit Address",
+    "account.photo_url": "Profile Photo URL",
+    "account.save_changes": "Save Changes",
+    "account.email_non_editable": "Email address cannot be changed",
+    "account.profile_updated": "Profile updated successfully.",
+    "account.save_address": "Save Address",
+    "account.update_address": "Update Address",
+    "account.addr_added": "Address saved successfully.",
+    "account.addr_deleted": "Address deleted.",
+    "account.confirm_delete_addr": "Are you sure you want to delete this address?",
+    "account.addr_label": "Address Label",
+    "account.preferred_lang": "Language",
+    "account.theme": "Theme Mode",
 
     // Auth Validation & Errors
     "auth.error_name_required": "Please enter your full name.",
@@ -134,7 +158,6 @@ export const translations = {
 
     // Product Card
     "product.add_to_cart": "কার্টে যোগ করুন",
-    "product.demo_tag": "ডেমো",
     "product.rating_count": "রিভিউ",
 
     // Store Card
@@ -177,6 +200,31 @@ export const translations = {
     "auth.role_customer": "ক্রেতা",
     "auth.profile_overview": "আমার একাউন্ট সারসংক্ষেপ",
     "auth.welcome_back": "স্বাগতম",
+
+    // Account Dashboard & Profile Tabs
+    "account.tab_profile": "ব্যক্তিগত তথ্য",
+    "account.tab_addresses": "ঠিকানা (Addresses)",
+    "account.tab_wishlist": "Wishlist",
+    "account.tab_orders": "অর্ডারসমূহ",
+    "account.tab_reviews": "রিভিউ",
+    "account.tab_notifications": "নোটিফিকেশন",
+    "account.tab_settings": "সেটিংস",
+    "account.profile_title": "ব্যক্তিগত তথ্য (Personal Information)",
+    "account.addresses_title": "আমার ঠিকানাসমূহ (Delivery Addresses)",
+    "account.add_new_address": "নতুন ঠিকানা যোগ করুন",
+    "account.edit_address": "ঠিকানা সম্পাদনা",
+    "account.photo_url": "প্রোফাইল ছবি লিংক (Photo URL)",
+    "account.save_changes": "পরিবর্তন সংরক্ষণ করুন",
+    "account.email_non_editable": "ইমেইল পরিবর্তনযোগ্য নয়",
+    "account.profile_updated": "প্রোফাইল সফলভাবে আপডেট করা হয়েছে।",
+    "account.save_address": "ঠিকানা সংরক্ষণ করুন",
+    "account.update_address": "ঠিকানা হালনাগাদ করুন",
+    "account.addr_added": "ঠিকানা সফলভাবে সংরক্ষিত হয়েছে।",
+    "account.addr_deleted": "ঠিকানা মুছে ফেলা হয়েছে।",
+    "account.confirm_delete_addr": "আপনি কি এই ঠিকানাটি মুছে ফেলতে চান?",
+    "account.addr_label": "ঠিকানার ধরন (Label)",
+    "account.preferred_lang": "পছন্দনীয় ভাষা (Language)",
+    "account.theme": "থিম (Theme)",
 
     // Auth Validation & Errors
     "auth.error_name_required": "অনুগ্রহ করে আপনার পুরো নাম লিখুন।",

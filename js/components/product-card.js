@@ -9,21 +9,23 @@ export function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'card product-card';
 
-  const title = lang === 'bn' ? product.title_bn : product.title_en;
-  const category = lang === 'bn' ? product.category_bn : product.category_en;
-  const demoLabel = getTranslation('product.demo_tag');
+  const title = lang === 'bn' ? (product.title_bn || product.title) : (product.title_en || product.title);
+  const category = lang === 'bn' ? (product.category_bn || product.category) : (product.category_en || product.category);
   const addToCartText = getTranslation('product.add_to_cart');
+
+  const rating = product.rating || 0;
+  const reviewsCount = product.reviewsCount || 0;
 
   card.innerHTML = `
     <div class="product-card-img-wrapper">
-      <img src="${product.image}" alt="${title}" class="product-card-img" loading="lazy">
-      <span class="badge badge-demo" style="position: absolute; top: 8px; right: 8px;">${demoLabel}</span>
+      <img src="${product.image || 'assets/images/placeholder-product.svg'}" alt="${title}" class="product-card-img" loading="lazy">
+      ${product.badge ? `<span class="badge badge-secondary" style="position: absolute; top: 8px; right: 8px;">${product.badge}</span>` : ''}
     </div>
     <div class="product-card-body">
-      <div class="product-card-category">${category}</div>
+      <div class="product-card-category">${category || ''}</div>
       <h4 class="product-card-title">${title}</h4>
       <div style="font-size: var(--font-size-xs); color: var(--color-warning); margin-bottom: var(--space-2);">
-        ★ ${formatNumber(product.rating, lang)} <span style="color: var(--color-text-muted);">(${formatNumber(product.reviewsCount, lang)} ${getTranslation('product.rating_count')})</span>
+        ★ ${formatNumber(rating, lang)} <span style="color: var(--color-text-muted);">(${formatNumber(reviewsCount, lang)} ${getTranslation('product.rating_count')})</span>
       </div>
       <div class="product-card-price-row">
         <span class="product-price">${formatCurrency(product.price, lang)}</span>
@@ -37,7 +39,7 @@ export function createProductCard(product) {
 
   const btn = card.querySelector('.add-to-cart-btn');
   btn.addEventListener('click', () => {
-    showToast(`${title} - ${getTranslation('product.demo_tag')}: ${addToCartText}`, 'info');
+    showToast(`${title}: ${addToCartText}`, 'info');
   });
 
   return card;
