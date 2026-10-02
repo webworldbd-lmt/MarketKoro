@@ -16,6 +16,10 @@ export function createProductCard(product) {
   const rating = product.rating || 0;
   const reviewsCount = product.reviewsCount || 0;
 
+  const reviewHtml = (reviewsCount > 0 && rating > 0)
+    ? `★ ${formatNumber(rating, lang)} <span style="color: var(--color-text-muted);">(${formatNumber(reviewsCount, lang)} ${getTranslation('product.rating_count')})</span>`
+    : `<span style="color: var(--color-text-muted);">${lang === 'bn' ? 'এখনো কোনো রিভিউ নেই' : 'No reviews yet.'}</span>`;
+
   card.innerHTML = `
     <div class="product-card-img-wrapper">
       <img src="${product.image || 'assets/images/placeholder-product.svg'}" alt="${title}" class="product-card-img" loading="lazy">
@@ -25,7 +29,7 @@ export function createProductCard(product) {
       <div class="product-card-category">${category || ''}</div>
       <h4 class="product-card-title">${title}</h4>
       <div style="font-size: var(--font-size-xs); color: var(--color-warning); margin-bottom: var(--space-2);">
-        ★ ${formatNumber(rating, lang)} <span style="color: var(--color-text-muted);">(${formatNumber(reviewsCount, lang)} ${getTranslation('product.rating_count')})</span>
+        ${reviewHtml}
       </div>
       <div class="product-card-price-row">
         <span class="product-price">${formatCurrency(product.price, lang)}</span>
