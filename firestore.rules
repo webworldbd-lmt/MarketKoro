@@ -28,6 +28,22 @@ service cloud.firestore {
 
       // Deletion not permitted directly from frontend
       allow delete: if false;
+
+      // Address subcollection rules
+      match /addresses/{addressId} {
+        allow read, create, update, delete: if isOwner(userId);
+      }
+    }
+
+    // Public Collections
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Future seller permissions
+    }
+
+    match /stores/{storeId} {
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

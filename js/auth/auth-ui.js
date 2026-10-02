@@ -164,7 +164,7 @@ export function openRegisterModal() {
       </div>
 
       <div class="form-group">
-        <label class="form-label">${getTranslation('auth.phone')} (${getTranslation('product.demo_tag')})</label>
+        <label class="form-label">${getTranslation('auth.phone')}</label>
         <input type="tel" id="reg-phone" class="form-input" placeholder="${getTranslation('auth.phone_placeholder')}">
       </div>
 
@@ -522,9 +522,14 @@ export function openProfileModal(user, profile) {
       </div>
     </div>
 
-    <button id="modal-logout-btn" class="btn btn-outline btn-full" style="margin-top: var(--space-6); color: var(--color-error); border-color: var(--color-error);">
-      ${getTranslation('auth.logout')}
-    </button>
+    <div style="display: flex; gap: var(--space-2); margin-top: var(--space-6);">
+      <a href="account.html" class="btn btn-primary btn-full" style="text-align: center;">
+        ⚙️ ${getTranslation('nav.account')}
+      </a>
+      <button id="modal-logout-btn" class="btn btn-outline btn-full" style="color: var(--color-error); border-color: var(--color-error);">
+        ${getTranslation('auth.logout')}
+      </button>
+    </div>
   `;
 
   activeAuthModalBackdrop = createModal({
@@ -560,17 +565,10 @@ export function renderHeaderAccountState(accountNavEl, userState) {
   if (user) {
     const name = profile?.fullName || user.displayName || 'Account';
     accountNavEl.innerHTML = `
-      <a href="#account" id="header-user-menu-btn" class="nav-link active" aria-label="${name}">
+      <a href="account.html" id="header-user-menu-btn" class="nav-link active" aria-label="${name}">
         <span>👤 ${name.split(' ')[0]}</span>
       </a>
     `;
-    const btn = accountNavEl.querySelector('#header-user-menu-btn');
-    if (btn) {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openProfileModal(user, profile);
-      });
-    }
   } else {
     accountNavEl.innerHTML = `
       <a href="#login" id="header-login-btn" class="nav-link" aria-label="Login or Register">
