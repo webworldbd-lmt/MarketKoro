@@ -13,7 +13,6 @@ import {
   generateStoreSlug
 } from './seller-service.js';
 import { uploadImage, validateImageFile } from '../utils/image-uploader.js';
-import { openSellerDashboard } from './seller-dashboard-ui.js';
 
 let activeSellerModalBackdrop = null;
 
@@ -135,7 +134,7 @@ function renderApplicationStatusView(container, application, user, profile) {
     `;
     container.querySelector('#open-dashboard-btn').addEventListener('click', () => {
       closeModal(activeSellerModalBackdrop);
-      openSellerDashboard(user, profile);
+      window.location.href = 'seller.html';
     });
     container.querySelector('#close-approved-modal-btn').addEventListener('click', () => {
       closeModal(activeSellerModalBackdrop);
