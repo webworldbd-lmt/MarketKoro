@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User Profile security rules
+    match /users/{userId} {
+      // User can read their own profile
+      allow read: if isOwner(userId);
+
+      // User can create their profile upon registration (only as 'customer')
+      allow create: if isOwner(userId)
+                    && request.resource.data.role == 'customer'
+                    && request.resource.data.uid == userId;
+
+      // User can update their basic details (prevent changing identity or role)
+      allow update: if isOwner(userId)
+                    && request.resource.data.role == resource.data.role
+                    && request.resource.data.uid == userId;
+
+      // Deletion not permitted directly from frontend
+      allow delete: if false;
+    }
+  }
+}

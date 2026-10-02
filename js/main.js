@@ -6,13 +6,15 @@ import { demoCategories, demoFeaturedProducts, demoPopularProducts, demoSellers 
 import { createProductCard } from './components/product-card.js';
 import { formatNumber } from './utils/formatters.js';
 import { showToast } from './components/toast.js';
+import { onAuthChanged, getCurrentState } from './auth/auth-service.js';
+import { renderHeaderAccountState } from './auth/auth-ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Theme and Internationalization
   initTheme();
   initI18n();
 
-  // Bind Event Listeners
+  // Bind Theme & Language Switchers
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
@@ -35,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Initialize Authentication State Sync with Header
+  const navAccountItem = document.getElementById('nav-account-item');
+  onAuthChanged((state) => {
+    renderHeaderAccountState(navAccountItem, state);
+  });
+
   // Render Homepage UI Sections
   renderCategories();
   renderFeaturedProducts();
@@ -47,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFeaturedProducts();
     renderPopularProducts();
     renderFeaturedSellers();
+    renderHeaderAccountState(navAccountItem, getCurrentState());
   });
 
   // Handle Search Form Demo Action
