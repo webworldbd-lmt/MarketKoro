@@ -13,6 +13,7 @@ import { createEmptyState } from '../components/empty-state.js';
 import { uploadImage } from '../utils/image-uploader.js';
 import { renderProductsTab } from './seller-product-ui.js';
 import { getSellerProducts } from './product-service.js';
+import { renderOrdersTab } from './seller-order-ui.js';
 
 let activeDashboardModalBackdrop = null;
 let activeSellerTab = 'overview';
@@ -420,7 +421,7 @@ function renderSellerTabContent(targetEl, tab, application, metrics) {
   } else if (tab === 'products') {
     renderProductsTabStructure(targetEl, application);
   } else if (tab === 'orders') {
-    renderOrdersTabStructure(targetEl);
+    renderOrdersTabStructure(targetEl, application);
   } else if (tab === 'earnings') {
     renderEarningsTabStructure(targetEl, metrics);
   } else if (tab === 'withdrawals') {
@@ -869,27 +870,8 @@ function renderProductsTabStructure(container, application) {
   });
 }
 
-function renderOrdersTabStructure(container) {
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.style.padding = 'var(--space-6)';
-
-  card.innerHTML = `
-    <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--space-3);" data-i18n="seller.nav_orders">
-      অর্ডারসমূহ (Orders Management)
-    </h3>
-  `;
-
-  const emptyState = createEmptyState({
-    icon: '🛒',
-    titleBn: 'এখনো কোনো অর্ডার পাওয়া যায়নি',
-    titleEn: 'No customer orders yet',
-    subBn: 'ক্রেতাদের অর্ডার, ডেলিভারি স্ট্যাটাস এবং ট্র্যাকিং ফিচারের স্ট্রাকচার প্রস্তুত রয়েছে।',
-    subEn: 'Customer orders, processing status, and shipment management foundation is ready.'
-  });
-
-  card.appendChild(emptyState);
-  container.appendChild(card);
+function renderOrdersTabStructure(container, application) {
+  renderOrdersTab(container, application);
 }
 
 function renderEarningsTabStructure(container, metrics) {

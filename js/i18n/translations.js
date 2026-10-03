@@ -164,6 +164,8 @@ export const translations = {
     "seller.add_product_btn": "Add New Product",
     "seller.no_products_title": "No products listed yet",
     "seller.no_products_desc": "Start selling on MarketKoro by adding your first product.",
+    "seller.orders_title": "Orders Management",
+    "seller.orders_subtitle": "Track customer orders and update delivery fulfillment status.",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "Overview",
@@ -193,6 +195,7 @@ export const translations = {
     // Modal & Common
     "common.close": "Close",
     "common.loading": "Loading...",
+    "common.refresh": "Refresh",
     "common.no_items": "No items found",
     "common.error_occurred": "Something went wrong",
     "common.try_again": "Try Again"
@@ -360,6 +363,8 @@ export const translations = {
     "seller.add_product_btn": "নতুন পণ্য যোগ করুন",
     "seller.no_products_title": "এখনো কোনো পণ্য যোগ করা হয়নি",
     "seller.no_products_desc": "মার্কেটকোরোতে বিক্রি শুরু করতে আপনার প্রথম পণ্যটি যোগ করুন।",
+    "seller.orders_title": "অর্ডারসমূহ (Orders Management)",
+    "seller.orders_subtitle": "আপনার স্টোরের কাস্টমার অর্ডারসমূহ ট্র্যাক করুন এবং ডেলিভারি স্ট্যাটাস আপডেট করুন।",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "সারসংক্ষেপ",
@@ -389,6 +394,7 @@ export const translations = {
     // Modal & Common
     "common.close": "বন্ধ করুন",
     "common.loading": "লোড হচ্ছে...",
+    "common.refresh": "রিফ্রেশ",
     "common.no_items": "কোনো তথ্য পাওয়া যায়নি",
     "common.error_occurred": "একটি সমস্যা ঘটেছে",
     "common.try_again": "আবার চেষ্টা করুন"

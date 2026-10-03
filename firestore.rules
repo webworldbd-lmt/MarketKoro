@@ -94,5 +94,31 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+
+    // Orders Collection Rules
+    match /orders/{orderId} {
+      // Customer can read their own orders; Approved sellers can read orders containing their UID in sellerIds; Admin can read all
+      allow read: if (isAuthenticated() && resource.data.customerId == request.auth.uid)
+                  || (isApprovedSeller() && resource.data.sellerIds.hasAny([request.auth.uid]))
+                  || isAdmin();
+
+      // Customer can create an order owned by themselves
+      allow create: if isAuthenticated() && request.resource.data.customerId == request.auth.uid;
+
+      // Sellers can update order status but CANNOT alter customer identity, items, prices, payment status, totals, or seller ownership
+      allow update: if (isApprovedSeller()
+                        && resource.data.sellerIds.hasAny([request.auth.uid])
+                        && request.resource.data.customerId == resource.data.customerId
+                        && request.resource.data.sellerIds == resource.data.sellerIds
+                        && request.resource.data.totalAmount == resource.data.totalAmount
+                        && request.resource.data.paymentStatus == resource.data.paymentStatus
+                        && request.resource.data.paymentMethod == resource.data.paymentMethod
+                        && request.resource.data.items == resource.data.items
+                        && request.resource.data.shippingAddress == resource.data.shippingAddress)
+                    || isAdmin();
+
+      // Only Admin can delete orders
+      allow delete: if isAdmin();
+    }
   }
 }
