@@ -283,6 +283,8 @@
 .brand-logo img, .brand-logo svg {
   height: 42px;
   width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .search-bar-container {
