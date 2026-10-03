@@ -167,6 +167,35 @@ export const translations = {
     "seller.orders_title": "Orders Management",
     "seller.orders_subtitle": "Track customer orders and update delivery fulfillment status.",
 
+    // Seller Earnings & Commission
+    "earnings.gross_sales": "Gross Sales",
+    "earnings.platform_commission": "Platform Commission (5%)",
+    "earnings.refunds_adjustments": "Refunds & Adjustments",
+    "earnings.net_earnings": "Net Seller Earnings",
+    "earnings.pending_earnings": "Pending Unsettled Earnings",
+    "earnings.available_balance": "Available Balance",
+    "earnings.total_withdrawn": "Total Withdrawn",
+    "earnings.ledger_title": "Financial Ledger & Statements",
+    "earnings.no_transactions_title": "No financial records found",
+    "earnings.no_transactions_desc": "Completed order sales and withdrawal statements will appear here automatically.",
+
+    // Seller Withdrawals
+    "withdrawal.title": "Withdrawal & Payout Requests",
+    "withdrawal.min_notice": "Minimum withdrawal limit is ৳500. Processing takes 1-3 business days.",
+    "withdrawal.submit_btn": "Submit Withdrawal Request",
+    "withdrawal.requested_amount": "Requested Amount (৳ BDT)",
+    "withdrawal.payout_method": "Payout Method",
+    "withdrawal.account_holder": "Account Holder Name",
+    "withdrawal.mobile_number": "Mobile Banking Phone Number",
+    "withdrawal.bank_name": "Bank Name",
+    "withdrawal.branch_name": "Branch Name",
+    "withdrawal.account_number": "Bank Account Number",
+    "withdrawal.seller_note": "Optional Seller Note",
+    "withdrawal.history_title": "Previous Withdrawal Requests",
+    "withdrawal.no_requests_title": "No withdrawal requests yet",
+    "withdrawal.no_requests_desc": "When you request payout from available balance, history will appear here.",
+    "withdrawal.success_msg": "Withdrawal request submitted successfully! Payout amount reserved.",
+
     // Seller Dashboard Navigation
     "seller.nav_overview": "Overview",
     "seller.nav_store": "Store Profile",
@@ -365,6 +394,35 @@ export const translations = {
     "seller.no_products_desc": "মার্কেটকোরোতে বিক্রি শুরু করতে আপনার প্রথম পণ্যটি যোগ করুন।",
     "seller.orders_title": "অর্ডারসমূহ (Orders Management)",
     "seller.orders_subtitle": "আপনার স্টোরের কাস্টমার অর্ডারসমূহ ট্র্যাক করুন এবং ডেলিভারি স্ট্যাটাস আপডেট করুন।",
+
+    // Seller Earnings & Commission
+    "earnings.gross_sales": "মোট বিক্রি (Gross Sales)",
+    "earnings.platform_commission": "প্ল্যাটফর্ম কমিশন (৫%)",
+    "earnings.refunds_adjustments": "ফেরত ও অ্যাডজাস্টমেন্ট",
+    "earnings.net_earnings": "সেলার নীট আয় (Net Earnings)",
+    "earnings.pending_earnings": "অপেক্ষমাণ আয় (Pending Earnings)",
+    "earnings.available_balance": "উত্তোলনযোগ্য ব্যালেন্স",
+    "earnings.total_withdrawn": "মোট উত্তোলিত অর্থ",
+    "earnings.ledger_title": "আর্থিক লেনদেন ইতিহাস ও স্টেটমেন্ট",
+    "earnings.no_transactions_title": "কোন আর্থিক তথ্য পাওয়া যায়নি",
+    "earnings.no_transactions_desc": "অর্ডার সম্পন্ন হওয়া ও ব্যালেন্স উত্তোলনের ইতিহাস এখানে দেখা যাবে।",
+
+    // Seller Withdrawals
+    "withdrawal.title": "ব্যালেন্স উত্তোলন আবেদন (Withdrawal Request)",
+    "withdrawal.min_notice": "সর্বনিম্ন উত্তোলন সীমা ৳৫০০। প্রসেসিং সময় ১-৩ কার্যদিবস।",
+    "withdrawal.submit_btn": "উত্তোলন আবেদন জমা দিন",
+    "withdrawal.requested_amount": "উত্তোলনের পরিমাণ (৳ BDT)",
+    "withdrawal.payout_method": "উত্তোলন মাধ্যম (Payout Method)",
+    "withdrawal.account_holder": "একাউন্ট হোল্ডারের নাম",
+    "withdrawal.mobile_number": "মোবাইল ব্যাংকিং নম্বর",
+    "withdrawal.bank_name": "ব্যাংকের নাম",
+    "withdrawal.branch_name": "শাখার নাম (Branch)",
+    "withdrawal.account_number": "ব্যাংক একাউন্ট নম্বর",
+    "withdrawal.seller_note": "বিশেষ নোট (ঐচ্ছিক)",
+    "withdrawal.history_title": "পূর্ববর্তী উত্তোলন আবেদনসমূহ",
+    "withdrawal.no_requests_title": "কোন উত্তোলন আবেদন করা হয়নি",
+    "withdrawal.no_requests_desc": "উত্তোলনযোগ্য ব্যালেন্স থেকে আবেদন করলে তার স্ট্যাটাস এখানে দেখা যাবে।",
+    "withdrawal.success_msg": "উত্তোলন আবেদন সফলভাবে জমা দেয়া হয়েছে! অনুরোধকৃত অর্থ রিজার্ভ করা হয়েছে।",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "সারসংক্ষেপ",

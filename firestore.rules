@@ -60,9 +60,11 @@ service cloud.firestore {
 
       // User can update their own application to update profile (preserving current status) or resubmit (status 'pending');
       // Admin can update any application status (e.g., approve, reject, suspend)
+      // Note: Sellers CANNOT alter financial wallet/balance fields directly
       allow update: if (isOwner(userId)
                         && request.resource.data.uid == userId
-                        && request.resource.data.status == resource.data.status)
+                        && request.resource.data.status == resource.data.status
+                        && (!request.resource.data.keys().hasAny(['wallet', 'commissionRate'])))
                     || (isOwner(userId)
                         && request.resource.data.uid == userId
                         && request.resource.data.status == 'pending')
@@ -119,6 +121,27 @@ service cloud.firestore {
 
       // Only Admin can delete orders
       allow delete: if isAdmin();
+    }
+
+    // Withdrawal Requests Collection Rules
+    match /withdrawal_requests/{requestId} {
+      // Sellers can read their own withdrawal requests; Admins can read all
+      allow read: if (isApprovedSeller() && resource.data.sellerUid == request.auth.uid) || isAdmin();
+
+      // Approved sellers can submit a new withdrawal request owned by themselves with initial status 'pending'
+      allow create: if isApprovedSeller()
+                    && request.resource.data.sellerUid == request.auth.uid
+                    && request.resource.data.status == 'pending';
+
+      // Sellers CANNOT update or delete withdrawal requests once submitted; only Admin can update status or process payouts
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Financial Ledger / Audit Records (Admin & Server Managed)
+    match /financial_ledger/{ledgerId} {
+      allow read: if (isApprovedSeller() && resource.data.sellerUid == request.auth.uid) || isAdmin();
+      allow write: if isAdmin();
     }
   }
 }
