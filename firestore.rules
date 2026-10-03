@@ -17,6 +17,12 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    function isApprovedSeller() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/seller_applications/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/seller_applications/$(request.auth.uid)).data.status == 'approved';
+    }
+
     // User Profile security rules
     match /users/{userId} {
       // User can read their own profile; Admin can read any profile
@@ -66,10 +72,22 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Public Collections
+    // Products Collection
     match /products/{productId} {
-      allow read: if true;
-      allow write: if false;
+      // Public can read published products; Sellers can read their own products; Admin can read all
+      allow read: if resource == null || resource.data.status == 'published' || (isAuthenticated() && resource.data.sellerId == request.auth.uid) || isAdmin();
+
+      // Only approved sellers can create products owned by themselves
+      allow create: if isApprovedSeller() && request.resource.data.sellerId == request.auth.uid;
+
+      // Only product owner (or admin) can update; sellerId cannot be transferred
+      allow update: if (isApprovedSeller()
+                        && resource.data.sellerId == request.auth.uid
+                        && request.resource.data.sellerId == resource.data.sellerId)
+                    || isAdmin();
+
+      // Only product owner or admin can delete
+      allow delete: if (isApprovedSeller() && resource.data.sellerId == request.auth.uid) || isAdmin();
     }
 
     match /stores/{storeId} {
