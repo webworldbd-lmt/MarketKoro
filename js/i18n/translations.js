@@ -161,6 +161,9 @@ export const translations = {
     "seller.dashboard_sales": "Total Sales",
     "seller.dashboard_wallet": "Available Balance",
     "seller.view_public_store": "View Public Store",
+    "seller.add_product_btn": "Add New Product",
+    "seller.no_products_title": "No products listed yet",
+    "seller.no_products_desc": "Start selling on MarketKoro by adding your first product.",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "Overview",
@@ -354,6 +357,9 @@ export const translations = {
     "seller.dashboard_sales": "মোট বিক্রি",
     "seller.dashboard_wallet": "উত্তোলনযোগ্য ব্যালেন্স",
     "seller.view_public_store": "পাবলিক স্টোর দেখুন",
+    "seller.add_product_btn": "নতুন পণ্য যোগ করুন",
+    "seller.no_products_title": "এখনো কোনো পণ্য যোগ করা হয়নি",
+    "seller.no_products_desc": "মার্কেটকোরোতে বিক্রি শুরু করতে আপনার প্রথম পণ্যটি যোগ করুন।",
 
     // Seller Dashboard Navigation
     "seller.nav_overview": "সারসংক্ষেপ",

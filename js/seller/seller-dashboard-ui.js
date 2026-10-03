@@ -11,6 +11,8 @@ import { getSellerApplication, updateSellerProfile, generateStoreSlug, checkSlug
 import { openBecomeSellerModal } from './seller-ui.js';
 import { createEmptyState } from '../components/empty-state.js';
 import { uploadImage } from '../utils/image-uploader.js';
+import { renderProductsTab } from './seller-product-ui.js';
+import { getSellerProducts } from './product-service.js';
 
 let activeDashboardModalBackdrop = null;
 let activeSellerTab = 'overview';
@@ -47,6 +49,16 @@ export async function renderSellerDashboardPage(state) {
   // Fetch trusted Firestore seller application
   try {
     const application = await getSellerApplication(user.uid);
+
+    // Synchronize real products count for approved seller
+    if (application && application.status === 'approved') {
+      try {
+        const realProducts = await getSellerProducts(user.uid);
+        application.productsCount = realProducts.length;
+      } catch (e) {
+        console.warn("Products count fetch warning:", e);
+      }
+    }
 
     // 2. Customer with no seller application
     if (!application) {
@@ -406,7 +418,7 @@ function renderSellerTabContent(targetEl, tab, application, metrics) {
   } else if (tab === 'store') {
     renderStoreTabStructure(targetEl, application);
   } else if (tab === 'products') {
-    renderProductsTabStructure(targetEl);
+    renderProductsTabStructure(targetEl, application);
   } else if (tab === 'orders') {
     renderOrdersTabStructure(targetEl);
   } else if (tab === 'earnings') {
@@ -847,27 +859,14 @@ function renderStoreTabStructure(container, application) {
   container.appendChild(wrapper);
 }
 
-function renderProductsTabStructure(container) {
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.style.padding = 'var(--space-6)';
-
-  card.innerHTML = `
-    <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--space-3);" data-i18n="seller.nav_products">
-      পণ্য ব্যবস্থাপনা (Product Management)
-    </h3>
-  `;
-
-  const emptyState = createEmptyState({
-    icon: '📦',
-    titleBn: 'এখনো কোনো পণ্য যোগ করা হয়নি',
-    titleEn: 'No products listed yet',
-    subBn: 'পরবর্তী ধাপে পণ্য যোগ, স্টক আপডেট ও ক্যাটাগরি নির্বাচনের ফিচার যুক্ত হবে।',
-    subEn: 'Product listing, stock management, and pricing controls foundation is ready.'
+function renderProductsTabStructure(container, application) {
+  renderProductsTab(container, application, (newCount) => {
+    // Sync product count in metrics UI if visible
+    const prodMetricEl = document.querySelector('[data-i18n="seller.dashboard_products"]')?.closest('.card')?.querySelector('div[style*="font-size: var(--font-size-2xl)"]');
+    if (prodMetricEl) {
+      prodMetricEl.textContent = newCount;
+    }
   });
-
-  card.appendChild(emptyState);
-  container.appendChild(card);
 }
 
 function renderOrdersTabStructure(container) {
