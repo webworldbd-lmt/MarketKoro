@@ -23,3 +23,22 @@ export function formatCurrency(amount, lang = getCurrentLanguage()) {
   }
   return `৳ ${formattedAmount} BDT`;
 }
+
+export function formatDate(dateInput, lang = getCurrentLanguage()) {
+  if (!dateInput) return '-';
+  let date;
+  if (dateInput.toDate && typeof dateInput.toDate === 'function') {
+    date = dateInput.toDate();
+  } else {
+    date = new Date(dateInput);
+  }
+  if (isNaN(date.getTime())) return '-';
+
+  const day = formatNumber(date.getDate(), lang);
+  const monthNamesBn = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+  const monthNamesEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = lang === 'bn' ? monthNamesBn[date.getMonth()] : monthNamesEn[date.getMonth()];
+  const year = formatNumber(date.getFullYear(), lang);
+
+  return lang === 'bn' ? `${day} ${month}, ${year}` : `${month} ${day}, ${year}`;
+}
