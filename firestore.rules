@@ -97,6 +97,17 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Hero Banners Collection Rules
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /hero_banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Orders Collection Rules
     match /orders/{orderId} {
       // Customer can read their own orders; Approved sellers can read orders containing their UID in sellerIds; Admin can read all
